@@ -7,6 +7,7 @@ public class Enemy : MonoBehaviour
     private GameObject player;
 
     public float speed;
+    public bool hasPowerup;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -21,4 +22,5 @@ public class Enemy : MonoBehaviour
         Vector3 lookDirection = (player.transform.position - transform.position).normalized;
         enemyRb.AddForce(lookDirection * speed);
     }
+
 }
