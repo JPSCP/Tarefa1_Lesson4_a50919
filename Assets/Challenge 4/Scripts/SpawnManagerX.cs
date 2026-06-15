@@ -15,7 +15,10 @@ public class SpawnManagerX : MonoBehaviour
     public int waveCount = 1;
 
 
-    public GameObject player; 
+    public GameObject player;
+
+    private float baseEnemySpeed = 50f;     
+    private float speedIncreasePerWave = 15f; 
 
     // Update is called once per frame
     void Update()
@@ -26,37 +29,43 @@ public class SpawnManagerX : MonoBehaviour
         {
             SpawnEnemyWave(waveCount);
         }
-
     }
 
-    // Generate random spawn position for powerups and enemy balls
-    Vector3 GenerateSpawnPosition ()
+    Vector3 GenerateSpawnPosition()
     {
         float xPos = Random.Range(-spawnRangeX, spawnRangeX);
         float zPos = Random.Range(spawnZMin, spawnZMax);
         return new Vector3(xPos, 0, zPos);
     }
 
-
     void SpawnEnemyWave(int enemiesToSpawn)
     {
-        Vector3 powerupSpawnOffset = new Vector3(0, 0, -15); // make powerups spawn at player end
+        Vector3 powerupSpawnOffset = new Vector3(0, 0, -15);
 
-        // If no powerups remain, spawn a powerup
-        if (GameObject.FindGameObjectsWithTag("Powerup").Length == 0) // check that there are zero powerups
+        // Spawn powerup se não houver nenhum
+        if (GameObject.FindGameObjectsWithTag("Powerup").Length == 0)
         {
             Instantiate(powerupPrefab, GenerateSpawnPosition() + powerupSpawnOffset, powerupPrefab.transform.rotation);
         }
 
-        // Spawn number of enemy balls based on wave number
-        for (int i = 0; i < waveCount; i++)
+        // Calcula a velocidade para esta wave
+        float currentEnemySpeed = baseEnemySpeed + (speedIncreasePerWave * (waveCount - 1));
+
+        // Spawn enemies
+        for (int i = 0; i < enemiesToSpawn; i++)
         {
-            Instantiate(enemyPrefab, GenerateSpawnPosition(), enemyPrefab.transform.rotation);
+            GameObject newEnemy = Instantiate(enemyPrefab, GenerateSpawnPosition(), enemyPrefab.transform.rotation);
+
+            // Define a velocidade do inimigo
+            EnemyX enemyScript = newEnemy.GetComponent<EnemyX>();
+            if (enemyScript != null)
+            {
+                enemyScript.speed = currentEnemySpeed;
+            }
         }
 
         waveCount++;
-        ResetPlayerPosition(); // put player back at start
-
+        ResetPlayerPosition();
     }
 
     // Move player back to position in front of own goal

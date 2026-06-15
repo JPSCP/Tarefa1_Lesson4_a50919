@@ -14,7 +14,10 @@ public class PlayerControllerX : MonoBehaviour
 
     private float normalStrength = 10; // how hard to hit enemy without powerup
     private float powerupStrength = 25; // how hard to hit enemy with powerup
-    
+
+    public float boostStrength = 5f;           // Força do impulso (ajuste se quiser)
+    public ParticleSystem boostParticles;
+
     void Start()
     {
         playerRb = GetComponent<Rigidbody>();
@@ -29,6 +32,17 @@ public class PlayerControllerX : MonoBehaviour
 
         // Set powerup indicator position to beneath player
         powerupIndicator.transform.position = transform.position + new Vector3(0, -0.6f, 0);
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            playerRb.AddForce(focalPoint.transform.forward * boostStrength, ForceMode.Impulse);
+
+            if (boostParticles != null)
+            {
+                boostParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                boostParticles.Play();
+            }
+        }
 
     }
 
